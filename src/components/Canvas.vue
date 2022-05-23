@@ -30,8 +30,7 @@ export default defineComponent({
             type: String
         },
         strokeWidth: {
-            type: Number,
-            default: 5
+            type: Number
         },
         isShapesSelectable: {
             type: Boolean,

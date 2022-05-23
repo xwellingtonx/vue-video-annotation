@@ -10,5 +10,5 @@ cd dist
 git init
 git add -A
 git commit -m 'Deploy to Github Pages'
-git push -f https://github.com/NorvikIT/vue-cookies-consent.git master:gh-pages
+git push -f https://github.com/xwellingtonx/vue-video-annotation.git gh-pages
 cd -

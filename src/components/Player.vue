@@ -24,6 +24,7 @@
             <slot name="videoContent"></slot>
           </video>
           <Canvas 
+            :stroke-width="strokeWidth"
             :stroke-color="canvasSelectedColor"
             :action-type="canvasSelectedAction"
             :width="playerWidth.valueOf()" 
@@ -114,6 +115,14 @@ export default defineComponent({
       type: Number,
       default: 3000
     },
+
+    /**
+    * stroke width for the drawings (default 5)
+    */
+    strokeWidth: {
+      type: Number,
+      default: 5
+    },
     /**
     * An array annotations to be rendered (required any empty array if none)
     */  
@@ -170,10 +179,12 @@ export default defineComponent({
 
     onMounted(() => {
       window.addEventListener('resize',  onResize);
+      window.addEventListener("orientationchange", onResize);
     })
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
+      window.removeEventListener("orientationchange", onResize);
     })
 
     const onResize = () => {

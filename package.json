@@ -18,6 +18,7 @@
   "devDependencies": {
     "@iconify/vue": "^3.2.1",
     "@types/fabric": "^4.5.7",
+    "@types/node": "^17.0.35",
     "@vitejs/plugin-vue": "^1.10.2",
     "@vue/compiler-sfc": "^3.2.33",
     "sass": "^1.51.0",
