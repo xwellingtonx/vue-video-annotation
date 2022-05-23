@@ -1,0 +1,20 @@
+:deep(.va-player__button) {
+    height: $va-button-height;
+    width: $va-button-width;
+    font-size: $va-button-font-size;
+    color: $va-button-text-color;
+    background-color: transparent;
+    border: 0px;
+    padding: $va-button-padding;
+    cursor: pointer;
+
+    &:not(:first-child) {
+        margin-left: $va-button-margin-left;
+    }
+    
+    &.selected,
+    &:hover {
+        background-color: $va-button-hover-color;
+        border-radius: $va-button-hover-border-radius;
+    }
+}
