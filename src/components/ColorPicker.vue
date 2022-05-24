@@ -143,6 +143,7 @@ export default defineComponent({
 .va-player {
     &__color-picker {
         &__inner {
+            margin: 0px;
             padding-right: $va-color-picker-padding-right;
             padding-left: $va-color-picker-padding-left;
             margin-left: $va-button-margin-left;

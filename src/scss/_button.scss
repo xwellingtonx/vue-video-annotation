@@ -7,13 +7,26 @@
     border: 0px;
     padding: $va-button-padding;
     cursor: pointer;
+    line-height: normal !important;
 
     &:not(:first-child) {
         margin-left: $va-button-margin-left;
     }
     
-    &.selected,
-    &:hover {
+    &.selected {
+        background-color: $va-button-hover-color;
+        border-radius: $va-button-hover-border-radius;
+    }
+
+    svg {
+        
+        vertical-align: baseline !important;
+    }
+}
+
+
+@media (hover: hover) { 
+    .va-player__button:hover {
         background-color: $va-button-hover-color;
         border-radius: $va-button-hover-border-radius;
     }

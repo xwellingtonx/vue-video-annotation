@@ -56,20 +56,17 @@ export default defineComponent({
         ColorPicker
     },  
     setup(props, {emit}) {
-        let lastSelectedAction = '';
-
         onMounted(() => {
             if(!props.selectedColor)
                 onColorChage(props.colors[0]);
         })
 
         const onClick = (action: string) => {
-            if(action == lastSelectedAction) {
+            if(action == props.selectedAction) {
                 action = '';
             }
 
             emit('update:selectedAction', action);
-            lastSelectedAction = action;
         }
 
         const onColorChage = (color: string) => {

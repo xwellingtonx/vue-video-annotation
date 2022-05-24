@@ -4,45 +4,50 @@
         <div class="va-player__content__loading" v-show="isLoading" >
           <Loading />
         </div>
-          
-          <CanvasControls class="va-player__content__canvas-controls" v-if="showControlsOnFullscreen && !isDrawing"
+
+        <CanvasControls class="va-player__content__canvas-controls" v-if="showControlsOnFullscreen && !isDrawing && showAnnotationControls" 
           v-model:selectedColor="canvasSelectedColor"
           v-model:selectedAction="canvasSelectedAction"
           :colors="colors"/>
-          <video class="va-player__content__video" disablePictureInPicture="true"
-              ref="videoElement"
-              :src="src"
-              :poster="poster"
-              :autoplay="autoplay"
-              :loop="isLooping.valueOf()"
-              :muted="isMuted.valueOf()"
-              @timeupdate="onVideoTimeUpdate"
-              @progress="onMetadataLoaded"
-              @loadedmetadata="onMetadataLoaded"
-              @waiting="isLoading = true"
-              @canplay="isLoading = false">
-            <slot name="videoContent"></slot>
-          </video>
-          <Canvas 
-            :stroke-width="strokeWidth"
-            :stroke-color="canvasSelectedColor"
-            :action-type="canvasSelectedAction"
-            :width="playerWidth.valueOf()" 
-            :height="playerHeight.valueOf()"
-            :annotations="internalAnnotations"
-            :video-current-time="videoCurrentTime.valueOf()"
-            @drawing-start="onCanvasDrawingStart"
-            @drawing-end="onCanvasDrawingEnd" />
+
+        <video class="va-player__content__video" disablePictureInPicture="true"
+            ref="videoElement"
+            :src="src"
+            :poster="poster"
+            :autoplay="autoplay"
+            :loop="isLooping.valueOf()"
+            :muted="isMuted.valueOf()"
+            @timeupdate="onVideoTimeUpdate"
+            @progress="onMetadataLoaded"
+            @loadedmetadata="onMetadataLoaded"
+            @waiting="isLoading = true"
+            @canplay="isLoading = false">
+          <slot name="videoContent"></slot>
+        </video>
+
+        <Canvas
+          :stroke-width="strokeWidth"
+          :stroke-color="canvasSelectedColor"
+          :action-type="canvasSelectedAction"
+          :width="playerWidth.valueOf()" 
+          :height="playerHeight.valueOf()"
+          :annotations="internalAnnotations"
+          :video-current-time="videoCurrentTime.valueOf()"
+          @drawing-start="onCanvasDrawingStart"
+          @drawing-end="onCanvasDrawingEnd" />
       </div>
+
       <div class="va-player__footer" v-if="!isFullScreen ? true : (showControlsOnFullscreen && !isDrawing)">
           <ProgressBar :progress-percentage="progressPercentage"
             :buffer-percentage="bufferPercentage"
             @skip-to="onProgressBarSkipTo" />
+
           <Annotations 
             :annotations="internalAnnotations" 
             :video-duration="videoDuration"
             :player-width="playerWidth.valueOf()"
             @annotation-click="onAnnotationClick"/>
+
           <PlayerControls 
             :current-video-time="videoCurrentTime.valueOf()"
             :is-looping="isLooping.valueOf()" 
@@ -61,7 +66,7 @@
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from 'vue'
 import { api as fullscreen } from 'vue-fullscreen'
-import Annotation from '../interfaces/Annotation'
+import { Annotation } from '../interfaces/Annotation'
 import PlayerControls from './PlayerControls.vue'
 import ProgressBar from './ProgressBar.vue'
 import Canvas from './Canvas.vue'
@@ -124,6 +129,13 @@ export default defineComponent({
       default: 5
     },
     /**
+    * show annotation constrols (default true)
+    */  
+    showAnnotationControls: {
+      type: Boolean,
+      default: true
+    },    
+    /**
     * An array annotations to be rendered (required any empty array if none)
     */  
     annotations: {
@@ -179,14 +191,20 @@ export default defineComponent({
 
     onMounted(() => {
       window.addEventListener('resize',  onResize);
-      window.addEventListener("orientationchange", onResize);
+      window.addEventListener("orientationchange", onOrientationChange);
     })
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
-      window.removeEventListener("orientationchange", onResize);
+      window.removeEventListener("orientationchange", onOrientationChange);
     })
 
+    const onOrientationChange = () => {
+      //Avoid the wrong size of canvas
+      setTimeout(() => {
+        onResize();
+      }, 50);
+    }
     const onResize = () => {
       //It's necessary to 
         if(!isFullscreenRequested.value) {
@@ -235,8 +253,18 @@ export default defineComponent({
         teleport: false,
         callback: (isFullscreen) => {
           isFullScreen.value = isFullscreen;
-          if(!isFullScreen.value)
+          let myScreenOrientation = window.screen.orientation;
+          let lockOrientation: OrientationLockType;
+
+          if(isFullScreen.value) {
+            lockOrientation = "landscape";
+          } else {
             setMinimizeVideoSize();
+            lockOrientation = "portrait";
+          }
+
+          myScreenOrientation.lock(lockOrientation)
+            .then(() => console.log(`${lockOrientation} locked`));
         },
       });
     }
@@ -390,54 +418,59 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-    .va-player {
-      &__content {
-        display: grid;
+.va-player {
+  &__content {
+    display: grid;
 
-        &__video {
-          height: 100%;
-          width: 100%;
-          grid-area: 1 / 1;
-          background-color: $va-player-color;
-        }
-
-        &__canvas-controls {
-          grid-area: 1 / 1;
-          z-index: 2;
-        }
-
-        &__loading {
-          grid-area: 1 / 1;
-          z-index: 2;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        //Fabric canvas container
-        &:deep(.canvas-container) {
-          height: 100% !important;
-          width: 100%  !important;
-          grid-area: 1 / 1;
-          z-index: 1;
-        }
-      }
-      &.fullscreen {
-        .va-player__footer {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          opacity: 0.85;
-          z-index: 99;
-        }
-
-        .va-player__content__video {
-          max-height: 100vh;
-        }
-      }
-
-      .pip-expanded, .pip-small, .pip-icon, .pip-explainer {
-        display: none;
-      }
+    &__video {
+      height: 100%;
+      width: 100%;
+      grid-area: 1 / 1;
+      background-color: $va-player-color;
     }
+
+    &__canvas-controls {
+      grid-area: 1 / 1;
+      z-index: 2;
+    }
+
+    &__loading {
+      grid-area: 1 / 1;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    //Fabric canvas container
+    &:deep(.canvas-container) {
+      height: 100% !important;
+      width: 100%  !important;
+      grid-area: 1 / 1;
+      z-index: 1;
+    }
+  }
+
+  &.fullscreen {
+    .va-player__footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      opacity: 0.85;
+      z-index: 99;
+    }
+
+    .va-player__content__video {
+      max-height: 100vh;
+    }
+  }
+
+  .pip-expanded, .pip-small, .pip-icon, .pip-explainer {
+    display: none;
+  }
+}
+
+*, ::after, ::before {
+  box-sizing: content-box;
+}
 </style>

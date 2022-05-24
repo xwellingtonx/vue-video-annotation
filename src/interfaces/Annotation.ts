@@ -1,4 +1,4 @@
-export default interface Annotation {
+export interface Annotation {
     /**
     * UUID to identify the object
     */

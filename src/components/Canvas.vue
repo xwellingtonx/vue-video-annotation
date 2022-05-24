@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
-import Annotation from '../interfaces/Annotation';
+import { Annotation } from '../interfaces/Annotation';
 import { CanvasActions } from '../utils/Constants';
 import { fabric } from "fabric";
 import { v4 as uuidv4 } from 'uuid';
@@ -258,8 +258,8 @@ export default defineComponent({
                         selectable: props.isShapesSelectable,
                         evented: props.isShapesSelectable,
                         angle: -45,
-                        width: getScaledValue(20),
-                        height: getScaledValue(20),
+                        width: getScaledValue(20 * (props.strokeWidth / 5)), //5 is the default value for stroke
+                        height: getScaledValue(20 * (props.strokeWidth / 5)),
                         fill: props.strokeColor,
                         data: {uuid: line.data?.uuid}
                     });

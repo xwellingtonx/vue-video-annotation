@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref, watch } from 'vue'
-import Annotation from '../interfaces/Annotation'
+import { Annotation } from '../interfaces/Annotation'
 
 export default defineComponent({
     name: 'Annotations',
@@ -120,6 +120,7 @@ export default defineComponent({
             background-color: $va-annotations-splitter-bg;
             margin: 0px;
             border: 0px;
+            opacity: 1;
         }
     }
 }
