@@ -13,8 +13,7 @@
     "fabric": "^5.2.1",
     "uuid": "^8.3.2",
     "vue": "^3.2.36",
-    "vue-fullscreen": "^3.1.1",
-    "vue-video-annotation": "vue-video-annotation-1.0.0.tgz"
+    "vue-fullscreen": "^3.1.1"
   },
   "devDependencies": {
     "@iconify/vue": "^3.2.1",
