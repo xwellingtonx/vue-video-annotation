@@ -1,6 +1,6 @@
 # Vue Video Annotation
 ![Size](https://img.shields.io/bundlephobia/minzip/vue-video-annotation)
-![Downloads](https://img.shields.io/npm/dt/vue-video-annotation)
+![Downloads](https://img.shields.io/npm/dw/vue-video-annotation)
 ![Version](https://img.shields.io/npm/v/vue-video-annotation)
 
 Vue3 component that allows adding annotations to videos by free drawing or adding shapes like circles, squares, and arrows.
