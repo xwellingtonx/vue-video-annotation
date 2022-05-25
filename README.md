@@ -17,7 +17,7 @@ Vue3 component that allows adding annotations to videos by free drawing or addin
 
 ```vue
 <template>
-  <vue-video-annotation :annotations="annotations"
+  <VideoAnnotationPlayer :annotations="annotations"
     @annotation-add="onAnnotationAdd">
     <template v-slot:videoContent>
       <source type="video/mp4" src="https://www.dropbox.com/s/xvjem6er1pp1usy/MicrosoftInclusiveHiring.mp4?raw=1">
@@ -26,14 +26,14 @@ Vue3 component that allows adding annotations to videos by free drawing or addin
 
       <track kind="subtitles" label="中文字幕" srclang="zh" src="https://www.dropbox.com/s/ipnbojfe0jtz5n7/MicrosoftInclusiveHiringCHT.vtt?raw=1" default>
     </template>
-  </vue-video-annotation>
+  </VideoAnnotationPlayer>
 </template>
 <script>
   import { VideoAnnotationPlayer, Annotation } from 'vue-video-annotation'
 
   export default defineComponent({
     components: {
-        VueVideoAnnotation
+        VideoAnnotationPlayer
     },
     setup() {
         let annotations = ref<Annotation[]>([]);
