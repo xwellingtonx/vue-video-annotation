@@ -68,13 +68,16 @@ export default defineComponent({
         let volumeInputValue = ref<number>(1);
         let volumeInputMax = ref<number>(1);
         
-        const onPlayPause = () => {
+        const onPlayPause = (event: MouseEvent) => {
             emit('playPauseClick');
+            event.preventDefault();
         }
-        const onLoop = () => {
+        const onLoop = (event: MouseEvent) => {
             emit('loopClick', !props.isLooping);
+
+            event.preventDefault();
         }
-        const onVolumeClick = () => {
+        const onVolumeClick = (event: MouseEvent) => {
             //Check which icon to change
             if(volumeInputValue.value > 0) {
                 volumeIcon.value = volumeOffIcon;
@@ -84,6 +87,8 @@ export default defineComponent({
                 volumeInputValue.value = volumeInputMax.value;
             }
             emit('volumeChange', volumeInputValue.value);
+
+            event.preventDefault();
         }
         const onVolumeChange = (value: number) => {
             if(value <= 0) {
@@ -97,8 +102,9 @@ export default defineComponent({
             emit('volumeChange', value);
         }
 
-        const onFullScreen = () => {
+        const onFullScreen = (event: MouseEvent) => {
             emit('fullScreenClick');
+            event.preventDefault();
         }
 
         const formatTime = (timeInSeconds: number) => {

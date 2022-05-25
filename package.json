@@ -1,7 +1,7 @@
 {
   "name": "vue-video-annotation",
   "description": "Vue3 component that allows adding annotations to videos by free drawing or adding shapes like circles, squares, and arrows.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "scripts": {
     "dev": "vite",

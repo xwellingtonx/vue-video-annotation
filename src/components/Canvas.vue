@@ -64,6 +64,7 @@ export default defineComponent({
             fabricCanvas.selection = false;
 
             fabricCanvas.on('mouse:down', (o) => {
+                o.e.preventDefault();
                 startDraw(o.e);
             });
 
@@ -71,8 +72,9 @@ export default defineComponent({
                 move(o.e);
             });
 
-            fabricCanvas.on('mouse:up', () => {
-               endDraw()
+            fabricCanvas.on('mouse:up', (o) => {
+                o.e.preventDefault();
+                endDraw()
             })
 
             showObjects(props.videoCurrentTime);
@@ -82,11 +84,17 @@ export default defineComponent({
             showObjects(newvideoCurrentTime);
         });
 
+        watch(() => props.annotations, () => {
+            showObjects(props.videoCurrentTime);
+        }, { deep: true})
+
         watch(() => [props.width, props.height], ([newWidth, newHeight]) => {      
             resizeAllRenderedObjects(newWidth, newHeight);
             
-            fabricCanvas.setWidth(newWidth);
-            fabricCanvas.setHeight(newHeight);
+            if(newWidth != fabricCanvas.width) {
+                fabricCanvas.setWidth(newWidth);
+                fabricCanvas.setHeight(newHeight);
+            }
         });
 
         //Watch stroke properties to update when freDrawing

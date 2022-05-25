@@ -60,7 +60,7 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Timeout to hide controls</label>
-          <input
+          <input autofocus
             type="number"
             class="form-control"
             v-model="constrolsTimeout"/>
@@ -133,7 +133,7 @@
       </div>
       <div class="examples__annotations">
         <h3>Imported Annotations</h3>
-        <textarea class="form-control">{{JSON.stringify(annotations)}}</textarea>
+        <textarea class="form-control">{{json.valueOf()}}</textarea>
       </div>
     </div>
   </div>
@@ -141,7 +141,7 @@
 
 <script lang="ts">
 import Player from "./components/Player.vue";
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { Annotation } from "./interfaces/Annotation";
 import annotationsJson from "./assets/annotations.json"
 import ColorPicker from "./components/ColorPicker.vue";
@@ -180,6 +180,10 @@ export default defineComponent({
       annotations.value.push(annotation);
     }
 
+    const json = computed(() => {
+      return JSON.stringify(annotations.value);
+    })
+
     const onDefaultColorChange = (event: Event) => {
       const checkBox = event.target as HTMLInputElement;
       if(checkBox.checked) {
@@ -213,6 +217,7 @@ export default defineComponent({
       constrolsTimeout,
       isDefaultColors,
       strokeWidth,
+      json,
       onAnnotationAdd,
       onDefaultColorChange,
       onCustomColorChange

@@ -1,5 +1,4 @@
 # Vue Video Annotation
-![Size](https://img.shields.io/bundlephobia/minzip/vue-video-annotation)
 ![Downloads](https://img.shields.io/npm/dw/vue-video-annotation)
 ![Version](https://img.shields.io/npm/v/vue-video-annotation)
 

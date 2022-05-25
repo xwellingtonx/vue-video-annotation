@@ -31,7 +31,7 @@
           :action-type="canvasSelectedAction"
           :width="playerWidth.valueOf()" 
           :height="playerHeight.valueOf()"
-          :annotations="internalAnnotations"
+          :annotations="annotations"
           :video-current-time="videoCurrentTime.valueOf()"
           @drawing-start="onCanvasDrawingStart"
           @drawing-end="onCanvasDrawingEnd" />
@@ -43,7 +43,7 @@
             @skip-to="onProgressBarSkipTo" />
 
           <Annotations 
-            :annotations="internalAnnotations" 
+            :annotations="annotations" 
             :video-duration="videoDuration"
             :player-width="playerWidth.valueOf()"
             @annotation-click="onAnnotationClick"/>
@@ -180,31 +180,23 @@ export default defineComponent({
     let canvasSelectedAction = ref<CanvasActions>();
     let isFullscreenRequested = ref<boolean>(false);
     let videoDuration = ref<number>(0);
-    let internalAnnotations = ref<Annotation[]>(props.annotations);
+    //let internalAnnotations = ref<Annotation[]>(props.annotations);
     let isLoading = ref<boolean>(true);
     
-    let minimizedPlayerWidth: number = 0;
-    let minimizedPlayerHeight: number = 0;
+    let minimizedPlayerWidth = ref<number>(0);
+    let minimizedPlayerHeight = ref<number>(0);
     let controlsTimeoutInstance: any = null;
     
     let currentAnnotationStartTime = 0;
 
     onMounted(() => {
       window.addEventListener('resize',  onResize);
-      window.addEventListener("orientationchange", onOrientationChange);
     })
 
     onBeforeUnmount(() => {
       window.removeEventListener('resize', onResize);
-      window.removeEventListener("orientationchange", onOrientationChange);
     })
 
-    const onOrientationChange = () => {
-      //Avoid the wrong size of canvas
-      setTimeout(() => {
-        onResize();
-      }, 50);
-    }
     const onResize = () => {
       //It's necessary to 
         if(!isFullscreenRequested.value) {
@@ -246,6 +238,9 @@ export default defineComponent({
     }
 
     const onFullScreen = () => {
+      if(isLoading.value)
+        return;
+
       isFullscreenRequested.value = !isFullscreenRequested.value;
 
       //Toggle the fullscren for the video element
@@ -254,17 +249,16 @@ export default defineComponent({
         callback: (isFullscreen) => {
           isFullScreen.value = isFullscreen;
           let myScreenOrientation = window.screen.orientation;
-          let lockOrientation: OrientationLockType;
+          let lockOrientation: OrientationLockType  = "landscape";
 
           if(isFullScreen.value) {
             lockOrientation = "landscape";
+            myScreenOrientation.lock(lockOrientation)
+            .then(() => console.log(`${lockOrientation} locked`));
           } else {
             setMinimizeVideoSize();
-            lockOrientation = "portrait";
+            myScreenOrientation.unlock();
           }
-
-          myScreenOrientation.lock(lockOrientation)
-            .then(() => console.log(`${lockOrientation} locked`));
         },
       });
     }
@@ -297,13 +291,13 @@ export default defineComponent({
     }
 
     const setMinimizeVideoSize = () => {
-      minimizedPlayerWidth = videoElement.value?.offsetWidth;
-      minimizedPlayerHeight = videoElement.value?.offsetHeight;
+      minimizedPlayerWidth.value = videoElement.value?.offsetWidth;
+      minimizedPlayerHeight.value = videoElement.value?.offsetHeight;
     }
 
     const onMetadataLoaded = () => {
       videoDuration.value = videoElement.value.duration;
-      internalAnnotations.value = props.annotations;
+      //internalAnnotations.value = props.annotations;
 
       setMinimizeVideoSize();
       updatePlayerSizeWithVideoSize();
@@ -338,8 +332,8 @@ export default defineComponent({
     }
 
     const updatePlayerSizeWithMinimizedSize = () => {
-      playerWidth.value = minimizedPlayerWidth;
-      playerHeight.value = minimizedPlayerHeight;
+      playerWidth.value = minimizedPlayerWidth.value;
+      playerHeight.value = minimizedPlayerHeight.value;
     }
 
     const onCanvasDrawingStart = () => {
@@ -398,9 +392,11 @@ export default defineComponent({
       canvasSelectedColor,
       canvasSelectedAction,
       isFullscreenRequested,
-      internalAnnotations,
+      //internalAnnotations,
       videoDuration,
       isLoading,
+      minimizedPlayerWidth,
+      minimizedPlayerHeight,
       onPlayPause,
       onLoop,
       onVolumeChange,
